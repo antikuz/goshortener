@@ -25,5 +25,5 @@ func generateURL() string {
 func main() {
 	logger := logging.GetLogger()
 	logger.Sugar().Info("Create connection to database")
-	db.NewDB("./test.sqlite3")
+	db.NewStorage("./test.sqlite3", logger)
 }
