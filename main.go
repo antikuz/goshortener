@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/antikuz/goshortener/internal/db"
+	"github.com/antikuz/goshortener/pkg/logging"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -22,5 +23,7 @@ func generateURL() string {
 }
 
 func main() {
-	database := db.NewDB("./test.sqlite3")
+	logger := logging.GetLogger()
+	logger.Sugar().Info("Create connection to database")
+	db.NewDB("./test.sqlite3")
 }
