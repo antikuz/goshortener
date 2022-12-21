@@ -12,7 +12,7 @@ import (
 )
 
 type Storage struct {
-	db *sql.DB
+	db     *sql.DB
 	logger *zap.Logger
 }
 
@@ -23,7 +23,7 @@ func NewStorage(dbPath string, logger *zap.Logger) *Storage {
 	}
 
 	return &Storage{
-		db: db,
+		db:     db,
 		logger: logger,
 	}
 }
@@ -35,7 +35,7 @@ func connectDB(dbPath string) (*sql.DB, error) {
 		if err != nil {
 			return nil, err
 		}
-	
+
 		sqlStmt := `
 		CREATE TABLE urls (
 			key TEXT NOT NULL UNIQUE,
@@ -62,7 +62,7 @@ func connectDB(dbPath string) (*sql.DB, error) {
 	return db, nil
 }
 
-func (s *Storage) NewURL(url models.ShortenURL) error {
+func (s *Storage) AddShortURL(url models.ShortenURL) error {
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
@@ -77,13 +77,29 @@ func (s *Storage) NewURL(url models.ShortenURL) error {
 	if err != nil {
 		return err
 	}
-	
+
 	err = tx.Commit()
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *Storage) GetURL(urlHash string) (models.ShortenURL, error) {
+	row := s.db.QueryRow("SELECT * FROM urls WHERE key = ?", urlHash)
+	urlModel := models.ShortenURL{}
+	if err := row.Scan(
+		&urlModel.Key,
+		&urlModel.Secret_key,
+		&urlModel.Target_url,
+		&urlModel.Is_active,
+		&urlModel.Clicks,
+	); err == sql.ErrNoRows {
+		return models.ShortenURL{}, err
+	}
+
+	return urlModel, nil
 }
 
 func (s *Storage) Close() {
