@@ -45,7 +45,7 @@ func connectDB(dbPath string) (*sql.DB, error) {
 			clicks INTEGER NOT NULL
 		);
 		CREATE UNIQUE INDEX idx_urls_key ON urls (key);
-		CREATE UNIQUE INDEX idx_urls_secret_key ON urls (secret_key);
+		CREATE INDEX idx_urls_secret_key ON urls (secret_key);
 		`
 		_, err := db.Exec(sqlStmt)
 		if err != nil {
