@@ -30,7 +30,7 @@ func (h *handler) shortURLRedirect(c *gin.Context) {
 		return
 	}
 	
-	c.String(200, "hash %s url: %v", c.Params.ByName("shortUrl"), redirectURL)
+	c.Redirect(302, redirectURL.Target_url)
 }
 
 func (h *handler) shortURLCreate(c *gin.Context) {
