@@ -32,11 +32,9 @@ func main() {
 
 	router := gin.Default()
 	handler := handlers.NewHandler(database, logger)
+	handler.Register(router)
 	
-	router.GET("/:shortUrl", handler.ShortURLRedirect)
-	router.POST("/shorti", handler.ShortURLCreate)
-  
-	router.Run()
+	logger.Sugar().Fatalf("Can't start webserver due to err: %v", router.Run())
 }
 
 

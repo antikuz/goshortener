@@ -18,7 +18,12 @@ func NewHandler(storage *db.Storage, logger *zap.Logger) *handler {
 	}
 }
 
-func (h *handler) ShortURLRedirect(c *gin.Context) {
+func (h *handler) Register(router *gin.Engine) {
+	router.GET("/:shortUrl", h.shortURLRedirect)
+	router.POST("/shorti", h.shortURLCreate)
+}
+
+func (h *handler) shortURLRedirect(c *gin.Context) {
 	redirectURL, err := h.storage.GetURL(c.Params.ByName("shortUrl"))
 	if err != nil {
 		c.AbortWithStatus(404)
@@ -28,7 +33,7 @@ func (h *handler) ShortURLRedirect(c *gin.Context) {
 	c.String(200, "hash %s url: %v", c.Params.ByName("shortUrl"), redirectURL)
 }
 
-func (h *handler) ShortURLCreate(c *gin.Context) {
+func (h *handler) shortURLCreate(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message":   "short url created successfully",
 		"short_url": "sdhsdh",
