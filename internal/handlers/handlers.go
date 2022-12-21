@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -54,9 +55,15 @@ func (h *handler) shortURLCreate(c *gin.Context) {
 			return
 		}
 
+		scheme := "http"
+		if c.Request.TLS != nil {
+			scheme = "https"
+		}
+
+		redirectURL := fmt.Sprintf("%s://%s/%s",scheme,c.Request.Host,urlHash)
 		c.JSON(200, gin.H{
 			"message":   "short url created",
-			"short_url": urlHash,
+			"short_url": redirectURL,
 		})
 	}
 }
