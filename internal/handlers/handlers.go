@@ -1,10 +1,16 @@
 package handlers
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/antikuz/goshortener/internal/db"
+	"github.com/antikuz/goshortener/internal/models"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
+
+const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
 type handler struct {
 	storage *db.Storage
@@ -29,13 +35,38 @@ func (h *handler) shortURLRedirect(c *gin.Context) {
 		c.AbortWithStatus(404)
 		return
 	}
-	
+
 	c.Redirect(302, redirectURL.Target_url)
 }
 
 func (h *handler) shortURLCreate(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message":   "short url created successfully",
-		"short_url": "sdhsdh",
-	})
+	if shortingURL, ok := c.GetQuery("shortingURL"); ok {
+		urlHash := generateURL()
+		urlModel := models.ShortenURL{
+			Key: urlHash,
+			Target_url: shortingURL,
+			Is_active: true,
+		}
+
+		if err := h.storage.AddShortURL(urlModel); err != nil {
+			h.logger.Sugar().Errorf("Cant add new short url to database, due to err: %v", err)
+			c.AbortWithStatus(500)
+			return
+		}
+
+		c.JSON(200, gin.H{
+			"message":   "short url created",
+			"short_url": urlHash,
+		})
+	}
+}
+
+func generateURL() string {
+	rand.Seed(time.Now().UnixMicro())
+	result := ""
+	for i := 5; i > 0; i-- {
+		result += string(chars[rand.Intn(len(chars))])
+	}
+
+	return result
 }

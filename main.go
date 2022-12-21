@@ -1,9 +1,6 @@
 package main
 
 import (
-	"math/rand"
-	"time"
-
 	"github.com/antikuz/goshortener/internal/db"
 	"github.com/antikuz/goshortener/pkg/logging"
 	"github.com/antikuz/goshortener/internal/handlers"
@@ -11,18 +8,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
 
-func generateURL() string {
-	rand.Seed(time.Now().UnixMicro())
-	result := ""
-	for i := 5; i > 0; i-- {
-		result += string(chars[rand.Intn(len(chars))])
-	}
 
-	return result
-}
+
 
 func main() {
 	logger := logging.GetLogger()
@@ -33,7 +22,7 @@ func main() {
 	router := gin.Default()
 	handler := handlers.NewHandler(database, logger)
 	handler.Register(router)
-	
+
 	logger.Sugar().Fatalf("Can't start webserver due to err: %v", router.Run())
 }
 

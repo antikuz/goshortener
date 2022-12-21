@@ -39,7 +39,7 @@ func connectDB(dbPath string) (*sql.DB, error) {
 		sqlStmt := `
 		CREATE TABLE urls (
 			key TEXT NOT NULL UNIQUE,
-			secret_key TEXT UNIQUE,
+			secret_key TEXT,
 			target_url TEXT NOT NULL,
 			is_active BOOLEAN NOT NULL,
 			clicks INTEGER NOT NULL
