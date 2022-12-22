@@ -8,11 +8,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-
-
-
-
-
 func main() {
 	logger := logging.GetLogger()
 	logger.Sugar().Info("Create connection to database")
@@ -25,5 +20,3 @@ func main() {
 
 	logger.Sugar().Fatalf("Can't start webserver due to err: %v", router.Run())
 }
-
-

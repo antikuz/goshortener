@@ -47,6 +47,7 @@ func (h *handler) shortURLCreate(c *gin.Context) {
 			Key: urlHash,
 			Target_url: shortingURL,
 			Is_active: true,
+			Expires: time.Now().AddDate(0, 0, 7),
 		}
 
 		if err := h.storage.AddShortURL(urlModel); err != nil {
