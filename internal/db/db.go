@@ -42,7 +42,8 @@ func connectDB(dbPath string) (*sql.DB, error) {
 			secret_key TEXT,
 			target_url TEXT NOT NULL,
 			is_active BOOLEAN NOT NULL,
-			clicks INTEGER NOT NULL
+			clicks INTEGER NOT NULL,
+			expires DATE
 		);
 		CREATE UNIQUE INDEX idx_urls_key ON urls (key);
 		CREATE INDEX idx_urls_secret_key ON urls (secret_key);
@@ -67,13 +68,13 @@ func (s *Storage) AddShortURL(url models.ShortenURL) error {
 	if err != nil {
 		return err
 	}
-	stmt, err := tx.Prepare("insert into urls values(?, ?, ?, ?, ?)")
+	stmt, err := tx.Prepare("insert into urls values(?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(url.Key, url.Secret_key, url.Target_url, url.Is_active, url.Clicks)
+	_, err = stmt.Exec(url.Key, url.Secret_key, url.Target_url, url.Is_active, url.Clicks, url.Expires)
 	if err != nil {
 		return err
 	}
@@ -95,6 +96,7 @@ func (s *Storage) GetURL(urlHash string) (models.ShortenURL, error) {
 		&urlModel.Target_url,
 		&urlModel.Is_active,
 		&urlModel.Clicks,
+		&urlModel.Expires,
 	); err == sql.ErrNoRows {
 		return models.ShortenURL{}, err
 	}
