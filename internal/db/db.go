@@ -104,6 +104,11 @@ func (s *Storage) GetURL(urlHash string) (models.ShortenURL, error) {
 	return urlModel, nil
 }
 
+func (s *Storage) DeleteURL(urlHash string) error {
+	_, err := s.db.Exec("DELETE FROM urls WHERE key = ?", urlHash)
+	return err
+}
+
 func (s *Storage) GetExpiredURL() ([]models.ShortenURL, error) {
 	rows, err := s.db.Query("SELECT * FROM urls WHERE expires < date('now');")
 	if err != nil {
