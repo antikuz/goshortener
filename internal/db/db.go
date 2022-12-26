@@ -104,6 +104,32 @@ func (s *Storage) GetURL(urlHash string) (models.ShortenURL, error) {
 	return urlModel, nil
 }
 
+func (s *Storage) GetExpiredURL() ([]models.ShortenURL, error) {
+	rows, err := s.db.Query("SELECT * FROM urls WHERE expires < date('now');")
+	if err != nil {
+		return []models.ShortenURL{}, err
+	}
+	defer rows.Close()
+
+	urlModels := []models.ShortenURL{}
+	for rows.Next() {
+		m := models.ShortenURL{}
+		if err = rows.Scan(
+			&m.Key,
+			&m.Secret_key,
+			&m.Target_url,
+			&m.Is_active,
+			&m.Clicks,
+			&m.Expires,
+		); err != nil {
+			return []models.ShortenURL{}, err
+		}
+		urlModels = append(urlModels, m)
+	}
+
+	return urlModels, nil
+}
+
 func (s *Storage) Close() {
 	if err := s.db.Close(); err != nil {
 		s.logger.Sugar().Errorf("Cant close database, due to err: %v", err)
