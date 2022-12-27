@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"os/signal"
 	"syscall"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/antikuz/goshortener/internal/db"
 	"github.com/antikuz/goshortener/internal/handlers"
+	"github.com/antikuz/goshortener/pkg/config"
 	"github.com/antikuz/goshortener/pkg/logging"
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
@@ -24,7 +26,9 @@ func main() {
 		syscall.SIGQUIT,
 	)
 
+	config := config.LoadConfig()
 	logger := logging.GetLogger()
+
 	logger.Info("Create connection to database")
 	database := db.NewStorage("./test.sqlite3", logger)
 	defer database.Close()
@@ -48,12 +52,14 @@ func main() {
 	handler := handlers.NewHandler(database, logger)
 	handler.Register(router)
 
+	addr := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    addr,
 		Handler: router,
 	}
 
 	go func() {
+		logger.Sugar().Infof("Start goshortener at %s", addr)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Sugar().Fatalf("Can't start webserver due to err: %v", err)
 		}
