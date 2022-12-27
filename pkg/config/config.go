@@ -22,9 +22,12 @@ func LoadConfig() *config {
 	pflag.Parse()
 
 	viper.AutomaticEnv()
-	viper.BindPFlags(pflag.CommandLine)
+	err := viper.BindPFlags(pflag.CommandLine)
+	if err != nil {
+		log.Fatalf("unable to BindPFlags, due to error:%v", err)
+	}
 
-	err := viper.Unmarshal(&c)
+	err = viper.Unmarshal(&c)
 	if err != nil {
 		log.Fatalf("unable to decode config into struct, %v", err)
 	}
