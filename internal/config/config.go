@@ -17,10 +17,10 @@ type config struct {
 func LoadConfig() *config {
 	var c config
 
-	pflag.Int("port", 8080, "help message for flagname")
-	pflag.String("host", "", "help message for flagname")
-	pflag.String("loglevel", "debug", "help message for flagname")
-	pflag.String("dbpath", "./db.sqlite3", "help message for flagname")
+	pflag.Int("port", 8080, "port to listen")
+	pflag.String("host", "", "IP to listen on, defaults to all IPs")
+	pflag.String("loglevel", "debug", "logger level")
+	pflag.String("dbpath", "./db.sqlite3", "path to db file")
 	pflag.Parse()
 
 	viper.AutomaticEnv()
