@@ -26,7 +26,7 @@ func main() {
 		syscall.SIGQUIT,
 	)
 
-	config := config.LoadConfig()
+	cfg := config.LoadConfig()
 	logger := logging.GetLogger()
 
 	logger.Info("Create connection to database")
@@ -52,7 +52,7 @@ func main() {
 	handler := handlers.NewHandler(database, logger)
 	handler.Register(router)
 
-	addr := fmt.Sprintf("%s:%d", config.Host, config.Port)
+	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: router,
