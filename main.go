@@ -27,7 +27,7 @@ func main() {
 	)
 
 	cfg := config.LoadConfig()
-	logger := logging.GetLogger()
+	logger := logging.GetLogger(cfg.LogLevel)
 
 	logger.Info("Create connection to database")
 	database := db.NewStorage("./test.sqlite3", logger)
