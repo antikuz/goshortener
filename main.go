@@ -9,12 +9,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/antikuz/goshortener/internal/config"
 	"github.com/antikuz/goshortener/internal/db"
 	"github.com/antikuz/goshortener/internal/handlers"
-	"github.com/antikuz/goshortener/pkg/config"
 	"github.com/antikuz/goshortener/pkg/logging"
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
