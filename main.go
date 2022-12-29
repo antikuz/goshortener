@@ -29,7 +29,7 @@ func main() {
 	logger := logging.GetLogger(cfg.LogLevel)
 
 	logger.Info("Create connection to database")
-	database := db.NewStorage("./test.sqlite3", logger)
+	database := db.NewStorage(cfg.DBPath, logger)
 	defer database.Close()
 
 	go func() {
